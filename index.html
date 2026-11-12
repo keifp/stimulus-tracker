@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stimulus Tracker · Assessment Development Pipeline</title>
+<meta name="description" content="A stimulus and permissions tracker for music theory assessment development. Work sample by Keith Pace, D.M.E.">
+<style>
+:root{--ink:#111;--muted:#555;--line:#cfcfcf;--bg:#f4f4f4;--card:#fff;--ok:#1d6b3a;--okbg:#e9f5ee;--warn:#8a5a00;--warnbg:#fff4dc;--bad:#9b2c1f;--badbg:#fbecea;--info:#1f4e8c;--infobg:#e8eff9;--focus:#0a66c2}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;font-size:14px}
+.wrap{max-width:1180px;margin:0 auto;padding:24px 16px 48px}
+header{border-bottom:3px solid #000;padding-bottom:10px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}
+.kicker{font-size:11px;letter-spacing:2.5px;text-transform:uppercase;font-weight:700}
+h1{font-size:30px;margin:4px 0 2px;letter-spacing:-.3px}
+.sub{color:var(--muted)}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+button,select,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer;border:1px solid #000;background:#fff;padding:8px 12px;border-radius:2px}
+button.primary{background:#000;color:#fff}
+button:hover{background:#f0f0f0}button.primary:hover{background:#222}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:16px}
+.stat{background:var(--card);border:1px solid #000;padding:12px}
+.stat .n{font-size:28px;font-weight:700;font-family:"Times New Roman",serif}
+.stat .l{color:var(--muted);font-size:12.5px}
+.stat.alert{border-color:var(--bad)}.stat.alert .n{color:var(--bad)}
+.tabs{display:flex;gap:0;border-bottom:1px solid #000;margin-bottom:12px;flex-wrap:wrap}
+.tabs button{border:1px solid #000;border-bottom:none;margin-right:-1px;background:#e9e9e9}
+.tabs button[aria-selected="true"]{background:#fff;font-weight:700}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;align-items:center}
+.filters input,.filters select{border:1px solid var(--line);padding:7px 9px;background:#fff;border-radius:2px}
+.filters input[type=search]{min-width:220px;flex:1}.filters label{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+table{width:100%;border-collapse:collapse;background:#fff;border:1px solid #000}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:#f7f7f7;font-size:12px;text-transform:uppercase;letter-spacing:.6px;cursor:pointer;white-space:nowrap}
+tr:hover td{background:#fafafa}
+td .t{font-weight:600}td .s{color:var(--muted);font-size:12.5px}
+.tag{display:inline-block;padding:2px 7px;border-radius:2px;font-size:12px;font-weight:600;white-space:nowrap}
+.g{background:var(--okbg);color:var(--ok)}.y{background:var(--warnbg);color:var(--warn)}.r{background:var(--badbg);color:var(--bad)}.b{background:var(--infobg);color:var(--info)}.n0{background:#eee;color:#444}
+.checks{display:flex;gap:3px}
+.checks span{width:20px;height:20px;border:1px solid #999;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#999;border-radius:2px}
+.checks span.on{background:#000;border-color:#000;color:#fff}
+.board{display:grid;grid-template-columns:repeat(6,minmax(170px,1fr));gap:10px;overflow-x:auto;padding-bottom:8px}
+.col{background:#e9e9e9;border:1px solid #000;min-height:200px;padding:8px}
+.col h3{font-size:12px;text-transform:uppercase;letter-spacing:.6px;margin:0 0 8px;display:flex;justify-content:space-between}
+.card{background:#fff;border:1px solid var(--line);padding:8px;margin-bottom:8px;cursor:pointer;width:100%;text-align:left}
+.card .t{font-weight:600;margin-bottom:4px}.card .s{color:var(--muted);font-size:12px;margin-bottom:6px}
+.risk{color:var(--bad);font-weight:600;font-size:12px}
+dialog{border:1px solid #000;border-radius:0;padding:0;width:min(720px,94vw)}
+dialog::backdrop{background:rgba(0,0,0,.35)}
+form .hd{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid #000;background:#f7f7f7}
+form .hd h2{margin:0;font-size:17px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px;padding:14px 16px}
+.grid label{display:flex;flex-direction:column;gap:4px;font-size:12.5px;font-weight:600}
+.grid input,.grid select,.grid textarea{border:1px solid var(--line);padding:7px 9px;font-weight:400;border-radius:2px}
+.full{grid-column:1/-1}
+fieldset{grid-column:1/-1;border:1px solid var(--line);padding:8px 12px}
+fieldset label{flex-direction:row;align-items:center;font-weight:400;display:inline-flex;margin-right:14px}
+.ft{display:flex;justify-content:space-between;gap:8px;padding:12px 16px;border-top:1px solid #000}
+.log{background:#fff;border:1px solid #000;padding:4px 14px}
+.log li{padding:6px 0;border-bottom:1px solid var(--line)}
+.about{margin-top:22px;background:#fff;border:1px solid #000;padding:16px 18px;line-height:1.55}
+.about h2{margin:0 0 6px;font-size:18px}
+.about ul{margin:6px 0 10px;padding-left:20px}
+.foot{font-size:12px;color:var(--muted);margin-top:8px}
+#view{overflow-x:auto}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media (max-width:700px){.grid{grid-template-columns:1fr}th:nth-child(4),td:nth-child(4),th:nth-child(6),td:nth-child(6){display:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div>
+    <div class="kicker">Assessment development · Music theory</div>
+    <h1>Stimulus Tracker</h1>
+    <div class="sub">Source, produce, review, and clear every score and audio stimulus from first idea to item bank.</div>
+  </div>
+  <div class="actions">
+    <button class="primary" id="addBtn">+ Add stimulus</button>
+    <button id="exportBtn">Export CSV</button>
+    <button id="resetBtn">Reset sample data</button>
+  </div>
+</header>
+
+<section class="stats" id="stats" aria-label="Summary"></section>
+
+<div class="tabs" role="tablist">
+  <button role="tab" aria-selected="true" data-view="table">Table</button>
+  <button role="tab" aria-selected="false" data-view="board">Pipeline board</button>
+  <button role="tab" aria-selected="false" data-view="perm">Permissions log</button>
+</div>
+
+<div class="filters">
+  <label class="sr" for="q">Search</label>
+  <input id="q" type="search" placeholder="Search title, composer, ID, notes…">
+  <label class="sr" for="fStage">Stage</label>
+  <select id="fStage"><option value="">All stages</option></select>
+  <label class="sr" for="fPerm">Permissions</label>
+  <select id="fPerm"><option value="">All permissions</option></select>
+  <label><input type="checkbox" id="fRisk"> At risk only</label>
+</div>
+
+<main id="view" aria-live="polite"></main>
+
+<section class="about">
+  <h2>About this tool</h2>
+  <p>Built as a work sample for the administrative side of an AP Music Theory assessment role: the stimulus pipeline that runs from sourcing a score or recording, through Sibelius engraving, Illustrator annotation, audio editing, and alt text, into internal and committee review, permissions clearance, and placement in the item bank.</p>
+  <ul>
+    <li><b>Production checklist:</b> the five boxes on each row track Score (Sibelius), SVG annotation (Illustrator), Audio (Audition / Media Encoder), Alt text, and Item bank placement.</li>
+    <li><b>At-risk flags:</b> a stimulus is flagged when its due date is within 14 days and it is not ready, or when a permissions request has been waiting more than 30 days.</li>
+    <li><b>Permissions log:</b> every third-party stimulus shows request date, days waiting, rights holder, and expiration, so nothing goes into an item without clearance.</li>
+    <li><b>Portable:</b> data saves in your browser; export to CSV for the permissions team or a project plan.</li>
+  </ul>
+  <div class="foot">Sample data is fictional and for demonstration only. Built by Keith Pace, D.M.E. · <a href="mailto:keithpace@me.com">keithpace@me.com</a> · <a href="https://keithpace.com">keithpace.com</a> · <a href="https://keifp.github.io/cadence-catcher/">Cadence Catcher</a><br>An independent work sample. Not affiliated with or endorsed by College Board or the AP Program.</div>
+</section>
+</div>
+
+<dialog id="dlg" aria-labelledby="dlgTitle">
+<form method="dialog" id="frm">
+  <div class="hd"><h2 id="dlgTitle">Stimulus</h2><button value="cancel" aria-label="Close">✕</button></div>
+  <div class="grid">
+    <label>ID<input name="id" required></label>
+    <label>Item use<select name="use"></select></label>
+    <label class="full">Title / excerpt<input name="title" required></label>
+    <label>Composer / creator<input name="composer"></label>
+    <label>Source type<select name="source"></select></label>
+    <label>Stage<select name="stage"></select></label>
+    <label>Owner<input name="owner"></label>
+    <label>Due date<input name="due" type="date"></label>
+    <label>Permissions status<select name="perm"></select></label>
+    <label>Rights holder<input name="holder"></label>
+    <label>Request sent<input name="requested" type="date"></label>
+    <label>Rights expire<input name="expires" type="date"></label>
+    <fieldset><legend>Production checklist</legend>
+      <label><input type="checkbox" name="c_score"> Score engraved</label>
+      <label><input type="checkbox" name="c_svg"> SVG annotated</label>
+      <label><input type="checkbox" name="c_audio"> Audio edited</label>
+      <label><input type="checkbox" name="c_alt"> Alt text reviewed</label>
+      <label><input type="checkbox" name="c_bank"> Placed in item bank</label>
+    </fieldset>
+    <label class="full">Notes<textarea name="notes" rows="3"></textarea></label>
+  </div>
+  <div class="ft"><button type="button" id="delBtn">Delete</button><span><button value="cancel">Cancel</button> <button class="primary" id="saveBtn" value="save">Save</button></span></div>
+</form>
+</dialog>
+
+<script>
+const STAGES=["Sourcing","Production","Internal review","Committee review","Permissions","Ready"];
+const PERMS=["Not required","To request","Requested","Granted","Denied"];
+const SOURCES=["Public domain score","Original composition","Licensed recording","Licensed score","Commissioned recording"];
+const USES=["MC: aural","MC: score-based","FR: melodic dictation","FR: harmonic dictation","FR: sight-singing","FR: part writing","Formative"];
+const CHECKS=[["c_score","S","Score engraved"],["c_svg","V","SVG annotated"],["c_audio","A","Audio edited"],["c_alt","T","Alt text reviewed"],["c_bank","B","Placed in item bank"]];
+const TODAY=new Date(); TODAY.setHours(0,0,0,0);
+const d=(n)=>{const x=new Date(TODAY);x.setDate(x.getDate()+n);return x.toISOString().slice(0,10)};
+const SAMPLE=[
+ {id:"MT-001",title:"Chorale excerpt, mm. 1–4 (cadence ID)",composer:"J. S. Bach (arr.)",source:"Public domain score",use:"MC: aural",stage:"Ready",owner:"K. Pace",due:d(-10),perm:"Not required",holder:"",requested:"",expires:"",c_score:1,c_svg:1,c_audio:1,c_alt:1,c_bank:1,notes:"Final audio approved; two plays with 5 s gap."},
+ {id:"MT-002",title:"Original melody in Dorian, 8 bars",composer:"K. Pace",source:"Original composition",use:"FR: melodic dictation",stage:"Committee review",owner:"K. Pace",due:d(9),perm:"Not required",holder:"",requested:"",expires:"",c_score:1,c_svg:0,c_audio:1,c_alt:1,c_bank:0,notes:"Committee flagged m. 6 leap; revised version uploaded."},
+ {id:"MT-003",title:"Piano sonata excerpt, mm. 1–8 (phrase structure)",composer:"Classical-era composer",source:"Licensed recording",use:"MC: aural",stage:"Permissions",owner:"Course Expert",due:d(21),perm:"Requested",holder:"Sample Records (fictional)",requested:d(-38),expires:"",c_score:1,c_svg:1,c_audio:1,c_alt:1,c_bank:0,notes:"Score is public domain; recording requires license."},
+ {id:"MT-004",title:"Ragtime excerpt, mm. 5–12 (secondary dominants)",composer:"Early 20th c. composer",source:"Public domain score",use:"MC: score-based",stage:"Production",owner:"K. Pace",due:d(6),perm:"Not required",holder:"",requested:"",expires:"",c_score:1,c_svg:0,c_audio:0,c_alt:0,c_bank:0,notes:"Needs annotation brackets on mm. 9–10."},
+ {id:"MT-005",title:"Four-part progression for realization",composer:"K. Pace",source:"Original composition",use:"FR: part writing",stage:"Internal review",owner:"Course Expert",due:d(14),perm:"Not required",holder:"",requested:"",expires:"",c_score:1,c_svg:1,c_audio:0,c_alt:1,c_bank:0,notes:"Audio not needed for score-only item."},
+ {id:"MT-006",title:"Art song excerpt, voice and piano (text painting)",composer:"Romantic-era composer",source:"Licensed score",use:"MC: score-based",stage:"Permissions",owner:"Permissions team",due:d(30),perm:"To request",holder:"Sample Music Publishing (fictional)",requested:"",expires:"",c_score:0,c_svg:0,c_audio:0,c_alt:0,c_bank:0,notes:"Modern critical edition; confirm whether older edition is public domain."},
+ {id:"MT-007",title:"Sight-singing melody, major, 4 bars",composer:"K. Pace",source:"Original composition",use:"FR: sight-singing",stage:"Ready",owner:"K. Pace",due:d(-3),perm:"Not required",holder:"",requested:"",expires:"",c_score:1,c_svg:1,c_audio:1,c_alt:1,c_bank:1,notes:"Starting pitch audio included."},
+ {id:"MT-008",title:"String quartet excerpt (modulation)",composer:"Commissioned ensemble",source:"Commissioned recording",use:"FR: harmonic dictation",stage:"Sourcing",owner:"Course Expert",due:d(45),perm:"Granted",holder:"Commission agreement on file",requested:d(-60),expires:d(700),c_score:0,c_svg:0,c_audio:0,c_alt:0,c_bank:0,notes:"Recording session scheduled; work-for-hire terms."},
+ {id:"MT-009",title:"Film-score cue, 12 seconds (texture)",composer:"Contemporary composer",source:"Licensed recording",use:"Formative",stage:"Permissions",owner:"Permissions team",due:d(12),perm:"Denied",holder:"Sample Film Music LLC (fictional)",requested:d(-45),expires:"",c_score:0,c_svg:0,c_audio:1,c_alt:0,c_bank:0,notes:"Denied. Replace with original or public domain stimulus."},
+ {id:"MT-010",title:"Minuet excerpt, mm. 1–8 (binary form)",composer:"Baroque composer",source:"Public domain score",use:"MC: aural",stage:"Production",owner:"K. Pace",due:d(18),perm:"Not required",holder:"",requested:"",expires:"",c_score:1,c_svg:1,c_audio:0,c_alt:0,c_bank:0,notes:"Re-record at 84 bpm per spec."}
+];
+const KEY="stimulus-tracker-v1";
+let rows=load(), view="table", sortKey="due", sortDir=1, editing=null;
+function load(){try{const s=localStorage.getItem(KEY);if(s)return JSON.parse(s)}catch(e){}return structuredClone(SAMPLE)}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(rows))}catch(e){}}
+const days=(s)=>s?Math.round((new Date(s+"T00:00:00")-TODAY)/864e5):null;
+const esc=(s)=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const fmt=(s)=>s?new Date(s+"T00:00:00").toLocaleDateString(undefined,{month:"short",day:"numeric",year:"numeric"}):"—";
+function risks(r){const out=[];const dd=days(r.due);if(r.stage!=="Ready"&&dd!==null&&dd<=14)out.push(dd<0?`Overdue ${-dd}d`:`Due in ${dd}d`);if(r.perm==="Requested"&&r.requested&&-days(r.requested)>30)out.push(`Permission waiting ${-days(r.requested)}d`);if(r.perm==="Denied")out.push("Permission denied");if(r.perm==="To request"&&dd!==null&&dd<=45)out.push("Request permission");if(r.expires&&days(r.expires)<=90)out.push("Rights expiring");return out}
+function permTag(p){const m={"Not required":"n0","To request":"y","Requested":"b","Granted":"g","Denied":"r"};return `<span class="tag ${m[p]||"n0"}">${esc(p)}</span>`}
+function stageTag(s){return `<span class="tag ${s==="Ready"?"g":"n0"}">${esc(s)}</span>`}
+function checks(r){return `<span class="checks" aria-label="${CHECKS.filter(c=>r[c[0]]).length} of 5 production steps done">${CHECKS.map(c=>`<span class="${r[c[0]]?"on":""}" title="${c[2]}${r[c[0]]?": done":": not done"}">${c[1]}</span>`).join("")}</span>`}
+function filtered(){const q=document.getElementById("q").value.toLowerCase(),st=document.getElementById("fStage").value,pm=document.getElementById("fPerm").value,rk=document.getElementById("fRisk").checked;
+ return rows.filter(r=>(!q||[r.id,r.title,r.composer,r.notes,r.owner,r.holder].join(" ").toLowerCase().includes(q))&&(!st||r.stage===st)&&(!pm||r.perm===pm)&&(!rk||risks(r).length))}
+function stats(){const atRisk=rows.filter(r=>risks(r).length).length,ready=rows.filter(r=>r.stage==="Ready").length,pending=rows.filter(r=>r.perm==="Requested"||r.perm==="To request").length,done=rows.reduce((a,r)=>a+CHECKS.filter(c=>r[c[0]]).length,0);
+ document.getElementById("stats").innerHTML=[[rows.length,"Stimuli tracked"],[ready,"Ready for item bank"],[atRisk,"At risk",atRisk>0],[pending,"Permissions open"],[Math.round(done/(rows.length*5||1)*100)+"%","Production complete"]].map(([n,l,a])=>`<div class="stat ${a?"alert":""}"><div class="n">${n}</div><div class="l">${l}</div></div>`).join("")}
+function render(){stats();const v=document.getElementById("view"),list=filtered();
+ if(view==="table"){const sorted=[...list].sort((a,b)=>(String(a[sortKey]||"~")>String(b[sortKey]||"~")?1:-1)*sortDir);
+  const H=[["id","ID"],["title","Stimulus"],["stage","Stage"],["checks","Production"],["perm","Permissions"],["owner","Owner"],["due","Due"]];
+  v.innerHTML=`<table><caption class="sr">Stimuli</caption><thead><tr>${H.map(([k,l])=>`<th scope="col" ${k!=="checks"?`tabindex="0" data-k="${k}" aria-sort="${sortKey===k?(sortDir>0?"ascending":"descending"):"none"}"`:""}>${l}${sortKey===k?(sortDir>0?" ▲":" ▼"):""}</th>`).join("")}</tr></thead><tbody>${sorted.map(r=>{const rk=risks(r);return `<tr><td>${esc(r.id)}</td><td><button class="linkish" data-edit="${esc(r.id)}" style="all:unset;cursor:pointer"><span class="t">${esc(r.title)}</span></button><div class="s">${esc(r.composer)} · ${esc(r.use)}</div>${rk.length?`<div class="risk">⚠ ${rk.map(esc).join(" · ")}</div>`:""}</td><td>${stageTag(r.stage)}</td><td>${checks(r)}</td><td>${permTag(r.perm)}</td><td>${esc(r.owner)}</td><td>${fmt(r.due)}</td></tr>`}).join("")||`<tr><td colspan="7">No stimuli match these filters.</td></tr>`}</tbody></table>`;
+  v.querySelectorAll("th[data-k]").forEach(th=>{const go=()=>{const k=th.dataset.k;sortDir=sortKey===k?-sortDir:1;sortKey=k;render()};th.onclick=go;th.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();go()}}});
+ } else if(view==="board"){
+  v.innerHTML=`<div class="board">${STAGES.map(s=>{const items=list.filter(r=>r.stage===s);return `<section class="col" aria-label="${s}"><h3><span>${s}</span><span>${items.length}</span></h3>${items.map(r=>{const rk=risks(r);return `<button class="card" data-edit="${esc(r.id)}"><div class="t">${esc(r.id)} · ${esc(r.title)}</div><div class="s">${esc(r.use)} · due ${fmt(r.due)}</div>${checks(r)} ${permTag(r.perm)}${rk.length?`<div class="risk">⚠ ${rk.map(esc).join(" · ")}</div>`:""}</button>`}).join("")}</section>`}).join("")}</div>`;
+ } else {
+  const p=list.filter(r=>r.perm!=="Not required").sort((a,b)=>PERMS.indexOf(a.perm)-PERMS.indexOf(b.perm));
+  v.innerHTML=`<table><caption class="sr">Permissions</caption><thead><tr><th>ID</th><th>Stimulus</th><th>Status</th><th>Rights holder</th><th>Requested</th><th>Waiting</th><th>Expires</th></tr></thead><tbody>${p.map(r=>{const w=r.requested&&r.perm==="Requested"?-days(r.requested):null;return `<tr><td>${esc(r.id)}</td><td><button data-edit="${esc(r.id)}" style="all:unset;cursor:pointer"><span class="t">${esc(r.title)}</span></button><div class="s">${esc(r.source)}</div></td><td>${permTag(r.perm)}</td><td>${esc(r.holder)||"—"}</td><td>${fmt(r.requested)}</td><td>${w!==null?`<span class="${w>30?"risk":""}">${w} days</span>`:"—"}</td><td>${fmt(r.expires)}</td></tr>`}).join("")||`<tr><td colspan="7">No third-party stimuli match these filters.</td></tr>`}</tbody></table>`;
+ }
+ v.querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>openDlg(rows.find(r=>r.id===b.dataset.edit)));
+}
+function fillSelect(el,opts){el.innerHTML+=opts.map(o=>`<option>${o}</option>`).join("")}
+fillSelect(document.getElementById("fStage"),STAGES);fillSelect(document.getElementById("fPerm"),PERMS);
+const F=document.getElementById("frm");
+[["use",USES],["source",SOURCES],["stage",STAGES],["perm",PERMS]].forEach(([n,o])=>F.elements[n].innerHTML=o.map(x=>`<option>${x}</option>`).join(""));
+const dlg=document.getElementById("dlg");
+function openDlg(r){editing=r||null;const x=r||{id:"MT-"+String(rows.length+1).padStart(3,"0"),stage:"Sourcing",perm:"Not required",source:"Original composition",use:"MC: aural"};
+ document.getElementById("dlgTitle").textContent=r?`Edit ${r.id}`:"Add stimulus";
+ for(const el of F.elements){if(!el.name)continue;if(el.type==="checkbox")el.checked=!!x[el.name];else el.value=x[el.name]??""}
+ document.getElementById("delBtn").style.visibility=r?"visible":"hidden";dlg.showModal();F.elements.title.focus()}
+F.addEventListener("submit",e=>{if(e.submitter&&e.submitter.value==="save"){const o={};for(const el of F.elements){if(!el.name)continue;o[el.name]=el.type==="checkbox"?(el.checked?1:0):el.value.trim()}
+ if(!o.id||!o.title){e.preventDefault();return}
+ if(editing){Object.assign(editing,o)}else rows.push(o);save();render()}});
+document.getElementById("delBtn").onclick=()=>{if(editing&&confirm(`Delete ${editing.id}?`)){rows=rows.filter(r=>r!==editing);save();dlg.close();render()}};
+document.getElementById("addBtn").onclick=()=>openDlg(null);
+document.getElementById("resetBtn").onclick=()=>{if(confirm("Replace current data with the sample set?")){rows=structuredClone(SAMPLE);save();render()}};
+document.getElementById("exportBtn").onclick=()=>{const cols=["id","title","composer","source","use","stage","owner","due","perm","holder","requested","expires",...CHECKS.map(c=>c[0]),"notes"];
+ const csv=[cols.join(","),...rows.map(r=>cols.map(c=>`"${String(r[c]??"").replace(/"/g,'""')}"`).join(","))].join("\n");
+ const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));a.download="stimulus-tracker.csv";a.click()};
+document.querySelectorAll('[role="tab"]').forEach(t=>t.onclick=()=>{document.querySelectorAll('[role="tab"]').forEach(x=>x.setAttribute("aria-selected","false"));t.setAttribute("aria-selected","true");view=t.dataset.view;render()});
+["q","fStage","fPerm","fRisk"].forEach(id=>document.getElementById(id).addEventListener("input",render));
+render();
+</script>
+</body>
+</html>
